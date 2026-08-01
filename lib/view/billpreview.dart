@@ -21,8 +21,8 @@ import 'package:provider/provider.dart';
 // import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class PreviewScreen extends StatefulWidget {
-  const PreviewScreen({super.key});
-
+  const PreviewScreen({super.key,this.lanid});
+  final int? lanid;
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
 }
@@ -102,32 +102,13 @@ class _PreviewScreenState extends State<PreviewScreen> {
     );
   }
 
-  Future<String> checkStatus(String urn, String tid) async {
-    final body = {"urn": urn, "tid": tid};
-    print("Original Request: $body");
-    final encryptedData = WorldlineEncryption.encryptRequest(body);
-
-    final response = await http.post(
-      Uri.parse('https://bouat.mrlpay.com/pcpos4/StatusCheck.php?source=629'),
-      headers: {'Content-Type': 'application/json'},
-      body: encryptedData,
-    );
-    final jsonResponse = jsonDecode(response.body);
-    final encrypted = jsonResponse['data'];
-    final decrypt = WorldlineEncryption.decryptResponse(encrypted);
-
-    final data = jsonDecode(decrypt);
-    return data['status'];
-  }
-
-
-  //   Future<String> checkStatus(String urn, String tid) async {
+  // Future<String> checkStatus(String urn, String tid) async {
   //   final body = {"urn": urn, "tid": tid};
   //   print("Original Request: $body");
   //   final encryptedData = WorldlineEncryption.encryptRequest(body);
 
   //   final response = await http.post(
-  //     Uri.parse('https://lb.mrlpay.com/pcpos4/StatusCheck.php?source=941'),
+  //     Uri.parse('https://bouat.mrlpay.com/pcpos4/StatusCheck.php?source=629'),
   //     headers: {'Content-Type': 'application/json'},
   //     body: encryptedData,
   //   );
@@ -138,6 +119,25 @@ class _PreviewScreenState extends State<PreviewScreen> {
   //   final data = jsonDecode(decrypt);
   //   return data['status'];
   // }
+
+
+    Future<String> checkStatus(String urn, String tid) async {
+    final body = {"urn": urn, "tid": tid};
+    print("Original Request: $body");
+    final encryptedData = WorldlineEncryption.encryptRequest(body);
+
+    final response = await http.post(
+      Uri.parse('https://lb.mrlpay.com/pcpos4/StatusCheck.php?source=941'),
+      headers: {'Content-Type': 'application/json'},
+      body: encryptedData,
+    );
+    final jsonResponse = jsonDecode(response.body);
+    final encrypted = jsonResponse['data'];
+    final decrypt = WorldlineEncryption.decryptResponse(encrypted);
+
+    final data = jsonDecode(decrypt);
+    return data['status'];
+  }
 
   Future<String> waitForPaymentStatus(String urn, String tid) async {
     while (true) {
@@ -159,53 +159,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
 
 
-  saleTransaction(String? amt, String? mode) async {
-    final request = {
-      "tid": "2462204U",
-      "amount": amt,
-      "organization_code": "Retail",
-      "invoiceNumber": "",
-      "rrn": "",
-      "type": mode == "CARD" ? "SALE" : "SALE-UPI",
-      "cb_amt": "",
-      "app_code": "",
-      "tokenisedValue": "",
-      "actionId": mode == "CARD" ? "1" : "133",
-      "request_urn": "",
-    };
-    print("Original Request: $request");
-
-    final encryptedData = WorldlineEncryption.encryptRequest(request);
-
-    final response = await http.post(
-      Uri.parse(
-        'https://bouat.mrlpay.com/pcpos4/TransactionRequest.php?source=629',
-      ),
-      headers: {'Content-Type': 'application/json'},
-      body: encryptedData,
-    );
-
-    final jsonResponse = jsonDecode(response.body);
-
-    final encrypted = jsonResponse['data'];
-    final decrypt = WorldlineEncryption.decryptResponse(encrypted);
-    print("decrypt json: $decrypt");
-    // if (decrypt == null || decrypt.startsWith("Error")) {
-    //   print("Decryption failed: $decrypt");
-    //   isEnabled.value = false;
-    //   Helpers.successToast("Payment failed. Please try again.");
-    //   return;
-    // }
-    final data = jsonDecode(decrypt);
-    final String urn = data['urn'];
-    final String tid = data['tid'];
-    return await waitForPaymentStatus(urn, tid);
-  }
-
-
-  //   saleTransaction(String? amt, String? mode) async {
+  // saleTransaction(String? amt, String? mode) async {
   //   final request = {
-  //     "tid": "3419965A",
+  //     "tid": "2462204U",
   //     "amount": amt,
   //     "organization_code": "Retail",
   //     "invoiceNumber": "",
@@ -223,7 +179,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   //   final response = await http.post(
   //     Uri.parse(
-  //       'https://lb.mrlpay.com/pcpos4/TransactionRequest.php?source=941',
+  //       'https://bouat.mrlpay.com/pcpos4/TransactionRequest.php?source=629',
   //     ),
   //     headers: {'Content-Type': 'application/json'},
   //     body: encryptedData,
@@ -234,11 +190,55 @@ class _PreviewScreenState extends State<PreviewScreen> {
   //   final encrypted = jsonResponse['data'];
   //   final decrypt = WorldlineEncryption.decryptResponse(encrypted);
   //   print("decrypt json: $decrypt");
+  //   // if (decrypt == null || decrypt.startsWith("Error")) {
+  //   //   print("Decryption failed: $decrypt");
+  //   //   isEnabled.value = false;
+  //   //   Helpers.successToast("Payment failed. Please try again.");
+  //   //   return;
+  //   // }
   //   final data = jsonDecode(decrypt);
   //   final String urn = data['urn'];
   //   final String tid = data['tid'];
   //   return await waitForPaymentStatus(urn, tid);
   // }
+
+
+    saleTransaction(String? amt, String? mode) async {
+    final request = {
+      "tid": "3419965A",
+      "amount": amt,
+      "organization_code": "Retail",
+      "invoiceNumber": "",
+      "rrn": "",
+      "type": mode == "CARD" ? "SALE" : "SALE-UPI",
+      "cb_amt": "",
+      "app_code": "",
+      "tokenisedValue": "",
+      "actionId": mode == "CARD" ? "1" : "133",
+      "request_urn": "",
+    };
+    print("Original Request: $request");
+
+    final encryptedData = WorldlineEncryption.encryptRequest(request);
+
+    final response = await http.post(
+      Uri.parse(
+        'https://lb.mrlpay.com/pcpos4/TransactionRequest.php?source=941',
+      ),
+      headers: {'Content-Type': 'application/json'},
+      body: encryptedData,
+    );
+
+    final jsonResponse = jsonDecode(response.body);
+
+    final encrypted = jsonResponse['data'];
+    final decrypt = WorldlineEncryption.decryptResponse(encrypted);
+    print("decrypt json: $decrypt");
+    final data = jsonDecode(decrypt);
+    final String urn = data['urn'];
+    final String tid = data['tid'];
+    return await waitForPaymentStatus(urn, tid);
+  }
 
 
   void showPaymentStatusDialog(String message, {bool isSuccess = false}) {

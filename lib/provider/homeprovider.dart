@@ -199,6 +199,9 @@ class HomeProvider extends ProviderHelperClass with ChangeNotifier {
     }
   }
 
+
+  
+
   Future<void> getStars() async {
     // updateLoadState(LoaderState.loading);
     final network = await CommonFunctions.checkInternetConnection();
@@ -307,29 +310,75 @@ class HomeProvider extends ProviderHelperClass with ChangeNotifier {
     }
   }
 
-  // Rate for "Muttarukkal with Coconut" = pooja 38's rate + pooja 39's rate,
+  // // Rate for "Muttarukkal with Coconut" = pooja 38's rate + pooja 39's rate,
+  // // looked up from the default deity's pooja list. Fetched directly via
+  // // serviceConfig (not the shared getPoojas()/poojaResponse state) so it
+  // // doesn't disturb whatever pooja list other screens currently have loaded.
+  // static const int muttarukkalPoojaId = 38;
+  // static const int coconutPoojaId = 39;
+  // static const int netBagPoojaId = 58;
+
+  // Future<double> getMuttarukkalWithCoconutRate() async {
+  //   try {
+  //     final results = await Future.wait([
+  //       serviceConfig.getPoojaDetails(muttarukkalPoojaId),
+  //       serviceConfig.getPoojaDetails(coconutPoojaId),
+  //     ]);
+
+  //     double total = 0;
+  //     for (final res in results) {
+  //       if (res.isValue) {
+  //         total += (res.asValue!.value as PoojaDetailsModel).data.rate;
+  //       }
+  //     }
+  //     return total;
+  //   } catch (e) {
+  //     debugPrint('exception in getMuttarukkalWithCoconutRate: $e');
+  //     return 0;
+  //   }
+  // }
+
+
+
+    // Rate for "Muttarukkal with Coconut" = pooja 38's rate + pooja 39's rate,
   // looked up from the default deity's pooja list. Fetched directly via
   // serviceConfig (not the shared getPoojas()/poojaResponse state) so it
   // doesn't disturb whatever pooja list other screens currently have loaded.
   static const int muttarukkalPoojaId = 38;
   static const int coconutPoojaId = 39;
+  static const int netBagPoojaId = 58;
 
-  Future<double> getMuttarukkalWithCoconutRate() async {
+  Future<(double muttarukkal, double coconut)> getMuttarukkalAndCoconutRates() async {
     try {
       final results = await Future.wait([
         serviceConfig.getPoojaDetails(muttarukkalPoojaId),
         serviceConfig.getPoojaDetails(coconutPoojaId),
       ]);
 
-      double total = 0;
-      for (final res in results) {
-        if (res.isValue) {
-          total += (res.asValue!.value as PoojaDetailsModel).data.rate;
-        }
+      double muttarukkalRate = 0;
+      double coconutRate = 0;
+      if (results[0].isValue) {
+        muttarukkalRate = (results[0].asValue!.value as PoojaDetailsModel).data.rate.toDouble();
       }
-      return total;
+      if (results[1].isValue) {
+        coconutRate = (results[1].asValue!.value as PoojaDetailsModel).data.rate.toDouble();
+      }
+      return (muttarukkalRate, coconutRate);
     } catch (e) {
-      debugPrint('exception in getMuttarukkalWithCoconutRate: $e');
+      debugPrint('exception in getMuttarukkalAndCoconutRates: $e');
+      return (0.0, 0.0);
+    }
+  }
+
+  Future<double> getNetBagRate() async {
+    try {
+      final res = await serviceConfig.getPoojaDetails(netBagPoojaId);
+      if (res.isValue) {
+        return (res.asValue!.value as PoojaDetailsModel).data.rate.toDouble();
+      }
+      return 0;
+    } catch (e) {
+      debugPrint('exception in getNetBagRate: $e');
       return 0;
     }
   }
@@ -382,6 +431,10 @@ class HomeProvider extends ProviderHelperClass with ChangeNotifier {
     if (network) {
       if (enableLoaderState) updateBtnLoader(true);
       if (!enableLoaderState) updateLoadState(LoaderState.loading);
+      final today = DateFormat('yyyy-MM-dd').format(DateTime.now());
+      previewBillResponse?.data?.poojaDetails?.forEach((item) {
+        item.date ??= item.fromDate ?? today;
+      });
       SaveBillBody saveBillBody = SaveBillBody(
         billAmount: grossamount,
         counterId: int.parse(AppConfig.counterID ?? '0'),

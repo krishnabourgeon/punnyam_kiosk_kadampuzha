@@ -788,6 +788,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:kiosk/color_pallatte.dart';
 import 'package:kiosk/extension.dart';
@@ -817,8 +818,8 @@ class _BookpoojascreenState extends State<Bookpoojascreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now(),
     );
     if (picked != null && picked != selectedDate) {
       home.updateSelectedDate(date: picked);
@@ -1214,9 +1215,34 @@ class _BookpoojascreenState extends State<Bookpoojascreen> {
                                                 color: Colors.black,
                                               ),
                                             ),
-                                            child: TextField(
+                                            child: 
+                                            // TextField(
+                                            //   keyboardType:
+                                            //       TextInputType.numberWithOptions(decimal: true),
+                                            //   controller: amt,
+                                            //   style:
+                                            //       Fontpalette.blackinter45400,
+                                            //   textAlignVertical:
+                                            //       TextAlignVertical.center,
+                                            //   decoration: InputDecoration(
+                                            //     isDense: true,
+                                            //     contentPadding:
+                                            //         EdgeInsets.symmetric(
+                                            //           vertical: 15.h,
+                                            //           horizontal: 40.w,
+                                            //         ),
+
+                                            //     hintText: " ",
+                                            //     hintStyle:
+                                            //         Fontpalette.blackinter24400,
+                                            //     border: InputBorder.none,
+                                            //   ),
+                                            // ),
+
+                                            TextField(
                                               keyboardType:
                                                   TextInputType.numberWithOptions(decimal: true),
+                                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                               controller: amt,
                                               style:
                                                   Fontpalette.blackinter45400,
