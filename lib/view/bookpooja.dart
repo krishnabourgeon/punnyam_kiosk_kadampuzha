@@ -836,8 +836,8 @@ class _BookpoojascreenState extends State<Bookpoojascreen> {
       final home = context.read<HomeProvider>();
       if (widget.isDonate) {
         //home.updateDietyId(id: null, name: "DONATION");
-        home.updateDietyId(id: null, name: "DONATION");
-        home.updateSelextedPoojaId(poojaname: "DONATION", poojaid: 1, rate: null);
+        home.updateDietyId(id: 8, name: "DONATION");
+        home.updateSelextedPoojaId(poojaname: "DONATION", poojaid: 29, rate: null);
 
       } else {
         if (home.deitiesResponse?.data != null && home.deitiesResponse!.data!.isNotEmpty) {

@@ -980,6 +980,10 @@ class _PreviewScreenState extends State<PreviewScreen> {
                                           if (paymentStatus == "success") {
                                           await home.saveBill(
                                             transid: "test",
+                                            paymentMode:
+                                                selectedPaymentMode == "CARD"
+                                                    ? 4
+                                                    : 6,
                                             onSuccess: () async {
                                               Helpers.successToast(
                                                 home

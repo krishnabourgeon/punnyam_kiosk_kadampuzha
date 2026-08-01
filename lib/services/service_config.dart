@@ -191,6 +191,7 @@ print(response);
       return Result.error(errorResponseModel);
     } else {
       var response = res.asValue!.value;
+      print("payment_modes response $response");
       PaymentModeResponse paymentModeResponse = PaymentModeResponse.fromJson(
         response,
       );

@@ -623,6 +623,8 @@ class _MuttarukkalBookingScreenState extends State<MuttarukkalBookingScreen> {
         diety: "Net Bag",
         star: "Net Bag",
         poojaid: HomeProvider.netBagPoojaId,
+        starid: 28,
+        dietyid: 4,
         date: today,
         rate: (netBagRate.value ?? 0).toStringAsFixed(0),
         qty: nb,

@@ -293,7 +293,9 @@ class HomeProvider extends ProviderHelperClass with ChangeNotifier {
           //   updatePoojasList(poojaResponse);
           // }
           len = poojaResponse?.data?.length ?? 0;
-          updateSelextedPoojaId(poojaid: null, rate: null, poojaname: null);
+          if (dietyIName != "DONATION") {
+            updateSelextedPoojaId(poojaid: null, rate: null, poojaname: null);
+          }
           updateBtnLoader(false);
           updatePoojaloader(LoaderState.loaded);
           updateLoadState(LoaderState.loaded);
@@ -425,6 +427,7 @@ class HomeProvider extends ProviderHelperClass with ChangeNotifier {
     Function? onSuccess,
     Function? onFailure,
     String? transid,
+    int? paymentMode,
     bool enableLoaderState = false,
   }) async {
     final network = await CommonFunctions.checkInternetConnection();
@@ -440,7 +443,7 @@ class HomeProvider extends ProviderHelperClass with ChangeNotifier {
         counterId: int.parse(AppConfig.counterID ?? '0'),
         customerId: AppConfig.customerId ?? 1,
         paidAmount: grossamount,
-        paymentMode: 5,
+        paymentMode: paymentMode,
         transactionid: transid ?? '',
         // ""transid == null || transid == '' ? null : transid",
         poojaDetails: previewBillResponse?.data?.poojaDetails,
